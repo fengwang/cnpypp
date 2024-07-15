@@ -5,6 +5,8 @@
 
 #include <algorithm>
 #include <complex>
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
@@ -12,13 +14,13 @@
 #include <iterator>
 #include <regex>
 #include <stdexcept>
-#include <stdint.h>
 
 #include <boost/endian/conversion.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 
 #include <zip.h>
+
 
 #include "../include/cnpy++.hpp"
 
@@ -641,6 +643,8 @@ int cnpypp_npz_save(char const* zipname, char const* filename,
   return retval;
 }
 
+struct cnpypp_npyarray_handle;
+
 cnpypp_npyarray_handle* cnpypp_load_npyarray(char const* fname) {
   cnpypp::NpyArray* arr = nullptr;
 
@@ -791,3 +795,33 @@ void cnpypp::finalize_npz(zip_t* archive, std::string fname,
   zip_close(archive);
 }
 
+
+
+
+cnpypp::InMemoryBuffer::InMemoryBuffer(size_t size)
+    : buffer{std::make_unique<std::byte[]>(size)} {}
+
+std::byte const* cnpypp::InMemoryBuffer::data() const { return buffer.get(); };
+
+std::byte* cnpypp::InMemoryBuffer::data() {
+  return const_cast<std::byte*>(
+      static_cast<InMemoryBuffer const&>(*this).data());
+}
+
+static auto const alignment = boost::iostreams::mapped_file::alignment();
+
+cnpypp::MemoryMappedBuffer::MemoryMappedBuffer(std::string const& path,
+                                               size_t offset_, size_t length)
+    : offset{offset_ % alignment},
+      buffer{path, boost::iostreams::mapped_file::mapmode::priv,
+             offset + length,
+             static_cast<boost::iostreams::stream_offset>(
+                 (offset_ / alignment) * alignment)} {}
+
+std::byte const* cnpypp::MemoryMappedBuffer::data() const {
+  return reinterpret_cast<std::byte const*>(buffer.data() + offset);
+}
+
+std::byte* cnpypp::MemoryMappedBuffer::data() {
+  return reinterpret_cast<std::byte*>(buffer.data() + offset);
+}

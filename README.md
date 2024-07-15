@@ -4,8 +4,6 @@
 It is designed in a way to integrate well into the modern C++ ecosystem and it provides features not available
 in any similar C++/npy library.
 
-Additionally, C bindings are provided for a limited, but most useful subset of the C++ functionality.
-
 If you find cnpypp useful for your research, please cite upstream publication
 M. Reininghaus, *cnpy++: A C++17 library for reading and writing .npy/.npz files*, SoftwareX **21**, 101324 (2023),
 doi:[10.1016/j.softx.2023.101324](https://doi.org/10.1016/j.softx.2023.101324).

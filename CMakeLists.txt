@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.30)
 project(CNPYpp LANGUAGES CXX C VERSION 2.1.1)
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(cnpy++ "src/cnpy++.cpp" "src/buffer.cpp" "src/c_interface.c")
+add_library(cnpy++ "src/cnpy++.cpp")
 
 get_directory_property(hasParent PARENT_DIRECTORY)
 
@@ -31,11 +31,7 @@ else()
 endif()
 
 install(TARGETS "cnpy++" LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES "include/cnpy++/tuple_util.hpp"
-    "include/cnpy++/stride_iterator.hpp"
-    "include/cnpy++/map_type.hpp"
-    "include/cnpy++/buffer.hpp" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cnpy++)
-install(FILES "include/cnpy++.hpp" "include/cnpy++.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES "include/cnpy++.hpp" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 if (NOT hasParent)
   add_executable(example1 "examples/example1.cpp")
@@ -44,8 +40,8 @@ if (NOT hasParent)
   add_executable(example2 "examples/example2.cpp")
   target_link_libraries(example2 cnpy++)
 
-  add_executable(example_c "examples/example_c.c")
-  target_link_libraries(example_c cnpy++)
+  #add_executable(example_c "examples/example_c.c")
+  #target_link_libraries(example_c cnpy++)
 
   add_executable(range_example "examples/range_example.cpp")
   target_link_libraries(range_example cnpy++)
