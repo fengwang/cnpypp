@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
 project(CNPYpp LANGUAGES CXX C VERSION 2.1.1)
+set(CMAKE_CXX_STANDARD 20)
 
 add_library(cnpy++ "src/cnpy++.cpp" "src/buffer.cpp" "src/c_interface.c")
 
@@ -55,7 +56,7 @@ if(CNPYPP_USE_LIBZIP)
 endif()
 find_package(Boost ${minimum_boost_version} COMPONENTS filesystem iostreams REQUIRED)
 
-target_compile_features(cnpy++ PUBLIC cxx_std_17)
+target_compile_features(cnpy++ PUBLIC cxx_std_20)
 set_property(TARGET cnpy++ PROPERTY CXX_EXTENSIONS OFF)
 target_include_directories(cnpy++ PUBLIC ${Boost_INCLUDE_DIR})
 target_include_directories(cnpy++ SYSTEM PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
@@ -88,15 +89,15 @@ if (NOT hasParent)
     add_executable(example2 "examples/example2.cpp")
     target_link_libraries(example2 cnpy++)
   endif()
-  
+
   add_executable(example_c "examples/example_c.c")
   target_link_libraries(example_c cnpy++)
-  
+
   add_executable(range_example "examples/range_example.cpp")
   target_link_libraries(range_example cnpy++)
   target_compile_features(range_example PRIVATE cxx_std_20)
   set_property(TARGET range_example PROPERTY CXX_EXTENSIONS OFF)
-  
+
   find_package(range-v3 QUIET)
   if (NOT range-v3_FOUND)
     message (STATUS  "range-v3 not found; downloading")
@@ -107,9 +108,9 @@ if (NOT hasParent)
     )
     FetchContent_MakeAvailable(range-v3)
   endif()
-  
+
   add_executable(range_zip_example "examples/range_zip_example.cpp")
   target_link_libraries(range_zip_example cnpy++ range-v3::range-v3)
-  target_compile_features(range_zip_example PRIVATE cxx_std_17)
+  target_compile_features(range_zip_example PRIVATE cxx_std_20)
   set_property(TARGET range_zip_example PROPERTY CXX_EXTENSIONS OFF)
 endif()
