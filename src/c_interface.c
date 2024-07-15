@@ -3,7 +3,7 @@
 // license available in LICENSE file, or at
 // http://www.opensource.org/licenses/mit-license.php
 
-#include "cnpy++.h"
+#include "../include/cnpy++.h"
 
 int cnpypp_npy_save_1d(char const* fname, enum cnpypp_data_type dtype,
                        void const* start, size_t const num_elem,

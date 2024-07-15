@@ -7,7 +7,7 @@
 
 #include <boost/iostreams/device/mapped_file.hpp>
 
-#include <cnpy++/buffer.hpp>
+#include "../include/cnpy++/buffer.hpp"
 
 cnpypp::InMemoryBuffer::InMemoryBuffer(size_t size)
     : buffer{std::make_unique<std::byte[]>(size)} {}

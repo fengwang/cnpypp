@@ -16,39 +16,6 @@ set(minimum_boost_version 1.74)
 
 include(FetchContent)
 
-if(CNPYPP_SPAN_IMPL STREQUAL "MS_GSL")
-  target_compile_definitions(cnpy++ PUBLIC "MSGSL_SPAN")
-  find_package(Microsoft.GSL 3.1.0 QUIET)
-  if (NOT Microsoft.GSL_FOUND)
-    message(STATUS "Microsoft.GSL not found; downloading")
-    FetchContent_Declare(GSL
-      GIT_REPOSITORY "https://github.com/microsoft/GSL"
-      GIT_TAG "v3.1.0"
-      GIT_SHALLOW True
-    )
-    FetchContent_MakeAvailable(GSL)
-    target_link_libraries(cnpy++ PUBLIC Microsoft.GSL::GSL)
-  endif()
-
-elseif(CNPYPP_SPAN_IMPL STREQUAL "GSL_LITE")
-  target_compile_definitions(cnpy++ PUBLIC "GSL_LITE_SPAN")
-  find_package(gsl-lite 0.40 QUIET)
-  if (NOT gsl-lite_FOUND)
-    message(STATUS "gsl-lite not found; downloading")
-    FetchContent_Declare(GSLLite
-      GIT_REPOSITORY "https://github.com/gsl-lite/gsl-lite"
-      GIT_TAG "v0.40.0"
-      GIT_SHALLOW True
-    )
-    FetchContent_MakeAvailable(GSLLite)
-    target_link_libraries(cnpy++ PUBLIC gsl::gsl-lite-v1)
-  endif()
-
-elseif(CNPYPP_SPAN_IMPL STREQUAL "BOOST")
-  target_compile_definitions(cnpy++ PUBLIC "BOOST_SPAN")
-  set(minimum_boost_version 1.78)
-endif()
-
 include(GNUInstallDirs)
 
 if(CNPYPP_USE_LIBZIP)

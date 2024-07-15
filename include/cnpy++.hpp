@@ -24,6 +24,7 @@
 #include <string_view>
 #include <utility>
 #include <vector>
+#include <span>
 
 #include <boost/endian/buffers.hpp>
 
@@ -31,33 +32,16 @@
 #include <zip.h>
 #endif
 
-#if defined(MSGSL_SPAN)
-#include <gsl/span>
-#elif defined(GSL_LITE_SPAN)
-#include <gsl-lite/gsl-lite.hpp>
-#elif defined(BOOST_SPAN)
-#include <boost/core/span.hpp>
-#else
-#include <span>
-#endif
-
-#include <cnpy++.h>
-#include <cnpy++/buffer.hpp>
-#include <cnpy++/map_type.hpp>
-#include <cnpy++/stride_iterator.hpp>
-#include <cnpy++/tuple_util.hpp>
+#include "./cnpy++.h"
+#include "./cnpy++/buffer.hpp"
+#include "./cnpy++/map_type.hpp"
+#include "./cnpy++/stride_iterator.hpp"
+#include "./cnpy++/tuple_util.hpp"
 
 namespace cnpypp {
 template <typename T>
-#if defined(MSGSL_SPAN)
-using span = gsl::span<T>;
-#elif defined(GSL_LITE_SPAN)
-using span = gsl_lite::span<T>;
-#elif defined(BOOST_SPAN)
-using span = boost::span<T>;
-#else
+
 using span = std::span<T>;
-#endif
 
 namespace detail {
 struct additional_parameters {
@@ -65,7 +49,8 @@ struct additional_parameters {
       std::vector<char>&& _npyheader, size_t size,
       std::function<size_t(cnpypp::span<char>, additional_parameters*)> _func)
       : npyheader{std::move(_npyheader)},
-        header_bytes_remaining{npyheader.size()}, buffer_capacity{size},
+        buffer_capacity{size},
+        header_bytes_remaining{npyheader.size()},
         buffer{std::make_unique<char[]>(size)}, func{_func} {}
 
   std::vector<char> const npyheader;

@@ -22,7 +22,7 @@
 #include <zip.h>
 #endif
 
-#include "cnpy++.hpp"
+#include "../include/cnpy++.hpp"
 
 using namespace cnpypp;
 

@@ -14,7 +14,7 @@
 
 #include <boost/iterator/iterator_facade.hpp>
 
-#include <cnpy++/map_type.hpp>
+#include "./map_type.hpp"
 
 namespace cnpypp {
 
