@@ -28,9 +28,7 @@
 
 #include <boost/endian/buffers.hpp>
 
-#ifndef NO_LIBZIP
 #include <zip.h>
-#endif
 
 #include "./cnpy++.h"
 #include "./cnpy++/buffer.hpp"

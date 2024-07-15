@@ -1,53 +1,50 @@
-# cnpy++
+# cnpypp
 
-`cnpy++` is a C++17 library that allows to read and write NumPy data files (.npy and .npz).
+`cnpypp` is a C++20 library that allows to read and write NumPy data files (.npy and .npz).
 It is designed in a way to integrate well into the modern C++ ecosystem and it provides features not available
 in any similar C++/npy library.
 
 Additionally, C bindings are provided for a limited, but most useful subset of the C++ functionality.
 
-If you find cnpy++ useful for your research, please cite
+If you find cnpypp useful for your research, please cite upstream publication
 M. Reininghaus, *cnpy++: A C++17 library for reading and writing .npy/.npz files*, SoftwareX **21**, 101324 (2023),
 doi:[10.1016/j.softx.2023.101324](https://doi.org/10.1016/j.softx.2023.101324).
 
 ## Motivation
 NumPy data files are a binary data format for serializing multi-dimenstional arrays.
-Due to its simplicity, it is a convenient format for scientific computing to be used not only from within Python. 
+Due to its simplicity, it is a convenient format for scientific computing to be used not only from within Python.
 
-## Building cnpy++
+## Building cnpypp
 
 ### Requirements
 
-* a C++17-compatible compiler (gcc and clang have been tested succesfully)
+* a C++20-compatible compiler (gcc and clang have been tested succesfully)
 * libzip-devel (required by default but optional)
-* boost (at least 1.74; if using >=1.78, you can use `boost::span` (see below)
-* optional: pre-installed versions of either Microsoft GSL or gsl-lite
+* boost (at least 1.74)
 
 ### Instructions
 
-cnpy++ is built via cmake. After downloading the code (say, into `/path/to/cnpy++`), create
-a build directory (say, `/path/to/cnpy++-build`). From within that directory, call
-`cmake -DCNPYPP_SPAN_IMPL=<...> /path/to/cnpy++`. cnpy++ needs an implementation of the
-`span<T>` type. This is available in Microsoft GSL, gsl-lite, boost since version 1.78 and in the STL
-if compiling with C++20 support. To select which implementation you want to use, set the CMake
-cache variable `CNPYPP_SPAN_IMPL` to either `MS_GSL`, `GSL_LITE` or `BOOST`. If set to `MS_GSL`
-or `GSL_LITE`, the corresponding library will be downloaded by cmake (using git) if not found already
-on the system.
+cnpypp is built via cmake. Typical building steps are
 
-Another option is `CNPYPP_USE_LIBZIP`, which by default is `ON`, but can be set to `OFF`. In that case,
-all functionality requiring libzip is disabled, i.e. no support for reading/writing NPZ archives.
+```bash
+git clone https://github.com/fengwang/cnpypp.git
+cd cnpypp
+mkdir build
+cd build
+cmake ..
+make -j`nproc`
+```
 
-After the cmake invocation returned successfully, call `make cnpy++` to compile the library,
-or just `make` to compile the examples, too.
+Note that libzip is required for reading and writing .npz files.
 
 ## Usage
 
-`cnpy++` consists of a header part, `cnpy++.hpp`, which needs to be included in your source file,
+`cnpypp` consists of a header part, `cnpy++.hpp`, which needs to be included in your source file,
 and a compiled part, which can either be a shared or a static library.
 
 
 ### Manual
-If you build `cnpy++` with `cmake -DBUILD_SHARED_LIBS=ON`, you obtain a shared library, `libcnpy++.so`,
+If you build with `cmake -DBUILD_SHARED_LIBS=ON`, you obtain a shared library, `libcnpy++.so`,
 that you need to link to your executable. On Unix systems with g++ or clang++ compilers, you can run
 
 ```bash
@@ -56,28 +53,27 @@ g++ -o my_executable my_executable.cpp -L/path/to/install/dir -lcnpy++
 
 This works analogously if you use the C bindings with a C compiler.
 
-In case of a static `cnpy++` build, you need to provide the path to `libcnpy++.a`:
+In case of a static build, you need to provide the path to `libcnpy++.a`:
 ```bash
 g++ -o my_executable my_executable.cpp /path/to/libcnpy++.a
 ```
 
 ### cmake-assisted compilation
 
-You can include cnpy++ in your own cmake-based project without having to install it first e.g. by using
+You can include this library in your own cmake-based project without having to install it first e.g. by using
 cmake's `FetchContent`. Add the following snippet to your `CMakeLists.txt`.
 
 ```
 include(FetchContent)
-FetchContent_Declare(cnpy++
-    GIT_REPOSITORY "https://gitlab.iap.kit.edu/mreininghaus/cnpypp.git"
+FetchContent_Declare(cnpypp
+    GIT_REPOSITORY "https://github.com/fengwang/cnpypp.git"
     GIT_SHALLOW True
 )
-FetchContent_MakeAvailable(cnpy++)
+FetchContent_MakeAvailable(cnpypp)
 ```
 
 ## API documentation
-All functions, data structures, etc. are placed inside the `cnpypp` namespace. The type alias
-`cnpypp::span<T>` is an alias to the implementation of `span<T>` as explained above.
+All functions, data structures, etc. are placed inside the `cnpypp` namespace.
 
 ### Writing data to .npy
 
@@ -90,12 +86,12 @@ void npy_save(std::string const& fname, TConstInputIterator start,
               std::string_view mode = "w",
               MemoryOrder memory_order = MemoryOrder::C);
 ```
-This function writes data from an interator `start` into the file indicated by the filename `fname`.  
+This function writes data from an interator `start` into the file indicated by the filename `fname`.
 The `shape` tuple describes the dimensions of the array, with the total number of elements given
-by the product of all entries of `shape`.  
+by the product of all entries of `shape`.
 The `mode` parameter can be either "w" or "a". With "w", a potentially existing file is overwritten.
 With "a", data are appended if the file already exists. In that case, the data shape has to match the
-shape in the existing file in all entries except the first.  
+shape in the existing file in all entries except the first.
 The `memory_order` parameter indicates the memory order and can be either `MemoryOrder::C`, `MemoryOrder::Fortran`,
 or their aliases `MemoryOrder::RowMajor` and `MemoryOrder::ColumnMajor`.
 
@@ -146,7 +142,7 @@ void npz_save(std::string const& zipname, std::string fname,
               std::initializer_list<size_t const> shape,
               std::string_view mode = "w",
               MemoryOrder memory_order = MemoryOrder::C)
-              
+
 template <typename TConstInputIterator>
 void npz_save(std::string const& zipname, std::string fname,
               TConstInputIterator start, cnpypp::span<size_t const> const shape,
@@ -219,7 +215,7 @@ T* NpyArray::begin<T>()
 ```
 returns a pointer to the first element, interpreted as type `T`. Note that it makes no sense to provide a `std::tuple` for `T`
 as the data in the file are packed, while a `std::tuple` is likely padded to have its member fields properly aligned. Moreover,
-`std::tuple` does not guarantee any particular order of its members.  
+`std::tuple` does not guarantee any particular order of its members.
 A number of similar methods are `cbegin<T>()`, `end<T>()`, `cend<T>()`, `data<T>()`.
 
 ```c++
